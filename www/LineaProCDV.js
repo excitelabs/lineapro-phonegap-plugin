@@ -41,23 +41,8 @@ LineaProCDV.prototype.onMagneticCardData = function(track1, track2, track3) {
     this.barcodeStart();
 };
 
-LineaProCDV.prototype.onBarcodeData = function(rawCodesArr, scanId, dob, state, city, expires, gender, height, weight, hair, eye, firstName, lastName) {
-    var data = {
-               rawCodesArr: rawCodesArr,
-               scanId: scanId,
-               dob: dob,
-               state: state,
-               city: city,
-               expires: expires,
-               gender: gender,
-               height: height,
-               weight: weight,
-               hair: hair,
-               eye: eye,
-               firstName: firstName,
-               lastName: lastName
-               };
-    this.barcodeCallback(data);
+LineaProCDV.prototype.onBarcodeData = function(barcodeData, type) {
+    this.barcodeCallback(barcodeData, type);
 };
                
               

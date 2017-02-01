@@ -4,7 +4,7 @@
 //  Created by Timofey Tatarinov on 27.01.14.
 //  Citronium
 //  http://citronium.com
-//
+//  Modified by Josh Kapp for Omnicell 04.11.16
 
 #import "LineaProCDV.h"
 
@@ -19,7 +19,7 @@
 -(void) scannerConect:(NSString*)num {
     
     NSString *jsStatement = [NSString stringWithFormat:@"reportConnectionStatus('%@');", num];
-    [self.webView stringByEvaluatingJavaScriptFromString:jsStatement];
+    [self.webViewEngine evaluateJavaScript:jsStatement completionHandler:nil];
     
 }
 
@@ -34,7 +34,7 @@
         
         // send to web view
         NSString *jsStatement = [NSString stringWithFormat:@"reportBatteryStatus('%@');", status];
-        [self.webView stringByEvaluatingJavaScriptFromString:jsStatement];
+        [self.webViewEngine evaluateJavaScript:jsStatement completionHandler:nil];
         
     }
 }
@@ -42,7 +42,7 @@
 -(void) scanPaymentCard:(NSString*)num {
     
     NSString *jsStatement = [NSString stringWithFormat:@"onSuccessScanPaymentCard('%@');", num];
-    [self.webView stringByEvaluatingJavaScriptFromString:jsStatement];
+    [self.webViewEngine evaluateJavaScript:jsStatement completionHandler:nil];
 	[self.viewController dismissViewControllerAnimated:YES completion:nil];
     
 }
@@ -95,7 +95,7 @@
 	}
     
     NSString* retStr = [ NSString stringWithFormat:@"LineaProCDV.connectionChanged(%d);", state];
-    [[super webView] stringByEvaluatingJavaScriptFromString:retStr];
+    [self.webViewEngine evaluateJavaScript:retStr completionHandler:nil];
 }
 
 - (void) deviceButtonPressed: (int) which {
@@ -122,7 +122,7 @@
         NSLog(@"magneticCardData (full info): accountNumber - %@, cardholderName - %@, expirationYear - %@, expirationMonth - %@, serviceCode - %@, discretionaryData - %@, firstName - %@, lastName - %@", [card objectForKey:@"accountNumber"], [card objectForKey:@"cardholderName"], [card objectForKey:@"expirationYear"], [card objectForKey:@"expirationMonth"], [card objectForKey:@"serviceCode"], [card objectForKey:@"discretionaryData"], [card objectForKey:@"firstName"], [card objectForKey:@"lastName"]);
     }
     NSString* retStr = [ NSString stringWithFormat:@"LineaProCDV.onMagneticCardData('%@', '%@', '%@');", track1, track2, track3];
-    [[super webView] stringByEvaluatingJavaScriptFromString:retStr];
+    [self.webViewEngine evaluateJavaScript:retStr completionHandler:nil];
 }
 
 - (void) magneticCardEncryptedData: (int) encryption tracks:(int) tracks data:(NSData *) data {
@@ -175,15 +175,19 @@
 }
 
 - (void) barcodeData: (NSString *) barcode type:(int) type {
+	//[self showAlert: @"- (void) barcodeData: (NSString *) barcode type:(int) type"];
     NSLog(@"barcodeData: barcode - %@, type - %@", barcode, [dtdev barcodeType2Text:type]);
     NSString* retStr = [ NSString stringWithFormat:@"LineaProCDV.onBarcodeData('%@', '%@');", barcode, [dtdev barcodeType2Text:type]];
-    [[super webView] stringByEvaluatingJavaScriptFromString:retStr];
+	//[self showAlert: @"retStr"];
+    [self.webViewEngine evaluateJavaScript:retStr completionHandler:nil];
 }
 
 - (void) barcodeNSData: (NSData *) barcode isotype:(NSString *) isotype {
+    //[self showAlert: @"- (void) barcodeNSData: (NSData *) barcode isotype:(NSString *) isotype"];
     NSLog(@"barcodeNSData: barcode - %@, type - %@", [[NSString alloc] initWithData:barcode encoding:NSUTF8StringEncoding], isotype);
     NSString* retStr = [ NSString stringWithFormat:@"LineaProCDV.onBarcodeData('%@', '%@');", [[NSString alloc] initWithData:barcode encoding:NSUTF8StringEncoding], isotype];
-    [[super webView] stringByEvaluatingJavaScriptFromString:retStr];
+	//[self showAlert: @"retStr"];
+    [self.webViewEngine evaluateJavaScript:retStr completionHandler:nil];
 }
 
 + (NSString*) getPDF417ValueByCode: (NSArray*) codesArr code:(NSString*)code {
@@ -211,39 +215,12 @@
 }
 
 - (void) barcodeNSData: (NSData *) barcode type:(int) type {
-    NSLog(@"barcodeNSData: barcode - %@, type - %@", [[NSString alloc] initWithData:barcode encoding:NSUTF8StringEncoding], [dtdev barcodeType2Text:type]);
-    NSArray *codesArr = [[[NSString alloc] initWithData:barcode encoding:NSUTF8StringEncoding] componentsSeparatedByCharactersInSet:
-                        [NSCharacterSet characterSetWithCharactersInString:@"\n\r"]];
-    NSString* substrDateBirth = @"DBB";
-    NSString* dateBirth = [LineaProCDV getPDF417ValueByCode:codesArr code: substrDateBirth];
-    NSString* substrName = @"DAC";
-    NSString* name = [LineaProCDV getPDF417ValueByCode:codesArr code: substrName];
-    NSString* substrLastName = @"DCS";
-    NSString* lastName = [LineaProCDV getPDF417ValueByCode:codesArr code: substrLastName];
-    NSString* substrEye = @"DAY";
-    NSString* eye = [LineaProCDV getPDF417ValueByCode:codesArr code: substrEye];
-    NSString* substrState = @"DAJ";
-    NSString* state = [LineaProCDV getPDF417ValueByCode:codesArr code: substrState];
-    NSString* substrCity = @"DAI";
-    NSString* city = [LineaProCDV getPDF417ValueByCode:codesArr code: substrCity];
-    NSString* substrHeight = @"DAU";
-    NSString* height = [LineaProCDV getPDF417ValueByCode:codesArr code: substrHeight];
-    NSString* substrWeight = @"DAW";
-    NSString* weight = [LineaProCDV getPDF417ValueByCode:codesArr code: substrWeight];
-    NSString* substrGender = @"DBC";
-    NSString* gender = [LineaProCDV getPDF417ValueByCode:codesArr code: substrGender];
-    NSString* substrHair = @"DAZ";
-    NSString* hair = [LineaProCDV getPDF417ValueByCode:codesArr code: substrHair];
-    NSString* substrExpires = @"DBA";
-    NSString* expires = [LineaProCDV getPDF417ValueByCode:codesArr code: substrExpires];
-    NSString* substrLicense = @"DAQ";
-    NSString* license = [LineaProCDV getPDF417ValueByCode:codesArr code: substrLicense];
-    NSLog(@"%@ %@ %@ %@ %@ %@ %@ %@ %@ %@ %@ %@", dateBirth, name, lastName, eye, state, city, height, weight, gender, hair, expires, license);
-    
-    NSString* rawCodesArrJSString = [LineaProCDV generateStringForArrayEvaluationInJS:codesArr];
-    //LineaProCDV.onBarcodeData(scanId, dob, state, city, expires, gender, height, weight, hair, eye)
-    NSString* retStr = [ NSString stringWithFormat:@"var rawCodesArr = %@; LineaProCDV.onBarcodeData(rawCodesArr, '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@', '%@');", rawCodesArrJSString, license, dateBirth, state, city, expires, gender, height, weight, hair, eye, name, lastName];
-    [[super webView] stringByEvaluatingJavaScriptFromString:retStr];
+	//[self showAlert:@"- (void) barcodeNSData: (NSData *) barcode type:(int) type"];
+
+	NSLog(@"barcodeNSData: barcode - %@, type - %@", [[NSString alloc] initWithData:barcode encoding:NSUTF8StringEncoding], [dtdev barcodeType2Text:type]);
+    NSString* retStr = [ NSString stringWithFormat:@"LineaProCDV.onBarcodeData('%@', '%@');", [[NSString alloc] initWithData:barcode encoding:NSUTF8StringEncoding], [dtdev barcodeType2Text:type]];
+	//[self showAlert: retStr];
+    [self.webViewEngine evaluateJavaScript:retStr completionHandler:nil];
 }
 
 - (void) bluetoothDeviceConnected: (NSString *) address {
@@ -270,6 +247,26 @@
 - (void) bluetoothDiscoverComplete: (BOOL) success {
     NSLog(@"bluetoothDiscoverComplete: success - %d", success);
 }
+
+// -  (void) showAlert: (NSString*) message {
+// 	UIAlertController * alert = [UIAlertController
+//                 alertControllerWithTitle:@"Title"
+//                                  message: message
+//                           preferredStyle:UIAlertControllerStyleAlert];
+
+//     UIAlertAction* okButton = [UIAlertAction
+//                         actionWithTitle:@"OK"
+//                                   style:UIAlertActionStyleDefault
+//                                 handler:^(UIAlertAction * action) {
+//                                     //Handle your yes please button action here
+//                                 }];
+// 	[alert addAction:okButton];
+
+// 	UIViewController * vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+// 	//UIViewController * vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+
+// 	[vc presentViewController:alert animated:YES completion:nil];
+// }
 
 
 

@@ -3,13 +3,12 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="com.citronium.lineaprocdv"
+    id="com.omnicell.lineaprocdv"
     version="0.1">
     <name>LineaProCDV</name>
     <description>LineaProCDV</description>
     <license>MIT</license>
-    <keywords>lineapro,citronium</keywords>
-    <repo>https://github.com/ttatarinov/lineapro-phonegap-plugin.git</repo>
+    <keywords>lineapro</keywords>
     <issue></issue>
     
     <js-module src="www/LineaProCDV.js" name="LineaProCDV">

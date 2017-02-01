@@ -1,5 +1,8 @@
-lineapro-phonegap-plugin
+linea-pro-cordova
 ========================
+## What is this?
+This plugin is a modified version of the github project https://github.com/ttatarinov/lineapro-phonegap-plugin for interfacing Linea Pro barcode scanners with iOS devices.
+
 
 ## Quick start
 To start plugin need to execute 'LineaProCDV.initDT()' method. 
@@ -27,6 +30,7 @@ Universal plugin for following devices:
 * Infinea TAB mini
 * Infinea TAB 4
 * Infinea TAB
+* Linea Pro 6
 * Linea Pro 5
 * Linea Pro 4
 * PP-60
